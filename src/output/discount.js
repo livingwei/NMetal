@@ -12,33 +12,6 @@ const productMessage = [ // discount 1 存在优惠 0未设置优惠
   {productNo: '002001', productName: '守扩之羽比翼双飞4.8g', price: 1080.00, rate: 0.95, discountOne: '0',discountTwo: '0',discountThree: '0', discountFour: '1', discountFive: '1'},
   {productNo: '002003', productName: '中国银象棋12g', price: 698.00, rate: 0.9, discountOne: '1',discountTwo: '1',discountThree: '1', discountFour: '0', discountFive: '0'},
 ]
-function getDiscount(product, amount){
-  let totalPrice =''
-  let discountList = []
-  getCurrentPro(product)
-  totalPrice = currentPro.price * amount
-  if(currentPro.rate === 0.9) {
-    discountList.push(currentPro.price * amount * (1 - 0.9))
-  }
-  if (currentPro.discountOne === '1' && totalPrice > 3000) {
-    discountList.push(350 * Math.floor(totalPrice/3000))
-  }
-  if (currentPro.discountTwo === '1' && totalPrice > 2000) {
-    discountList.push(30 * Math.floor(totalPrice/2000))
-  }
-  if (currentPro.discountThree === '1' && totalPrice > 1000) {
-    discountList.push(10 * Math.floor(totalPrice/1000))
-  }
-  if (currentPro.discountFour === '1' && amount > 3) {
-    discountList.push(currentPro.price * 0.5)
-  }
-  if (currentPro.discountFive === '1' && amount > 4) {
-    discountList.push(currentPro.price)
-  }
-  
-  return discountList.sort()[0]
-}
-
 function getCurrentPro(product){
   let currentPro = {}
   for (let index = 0; index < productMessage.length; index++) {
@@ -49,6 +22,34 @@ function getCurrentPro(product){
   }
   return currentPro
 }
+function getDiscount(product, amount, discountCards){
+  let totalPrice =''
+  let discountList = []
+  let currentOrderData = {}
+  currentOrderData.currentPro = getCurrentPro(product)
+  totalPrice = currentOrderData.currentPro.price * amount
+  if(currentOrderData.currentPro.rate === 0.9 && discountCards === '9折券') {
+    discountList.push(currentOrderData.currentPro.price * amount * (1 - 0.9))
+  }
+  if (currentOrderData.currentPro.discountOne === '1' && totalPrice > 3000) {
+    discountList.push(350 * Math.floor(totalPrice/3000))
+  }
+  if (currentOrderData.currentPro.discountTwo === '1' && totalPrice > 2000) {
+    discountList.push(30 * Math.floor(totalPrice/2000))
+  }
+  if (currentOrderData.currentPro.discountThree === '1' && totalPrice > 1000) {
+    discountList.push(10 * Math.floor(totalPrice/1000))
+  }
+  if (currentOrderData.currentPro.discountFour === '1' && amount > 3) {
+    discountList.push(currentOrderData.currentPro.price * 0.5)
+  }
+  if (currentOrderData.currentPro.discountFive === '1' && amount > 4) {
+    discountList.push(currentOrderData.currentPro.price)
+  }
+  currentOrderData.discount = discountList.sort()[discountList.length-1]
+  return currentOrderData
+}
+
 export {
   getDiscount
 }

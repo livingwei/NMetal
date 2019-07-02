@@ -1,6 +1,8 @@
 import OrderRepresentation from './output/order-representation';
-import DiscountItem from './output/discount-item';
+import {getUser, getUserType} from './output/getUser';
+// import {getDis} from './output/getDiscountObj';
 import message from './output/message';
+import {getDiscount} from './output/discount';
 const USERJSON = {
   "orderId": "0000001",
   "memberId": "6236609999",
@@ -33,37 +35,28 @@ const USERJSON = {
     "9折券"
   ]
 }
-const discounts = [
-  new DiscountItem({productNo: '001002', productName: '2019北京世园会纪念银章大全40g', discount: -414.00 }),
-  new DiscountItem({productNo: '002003', productName: '中国银象棋12g', discount: -350.00 }),
-] 
-const payments = [
-  {
-    type: '余额支付',
-    amount: 9860.00
-  }
-]
+// let discounts = getDis(USERJSON)
 export default class OrderApp {
-
   checkout(orderCommand) {
     // TODO: 请完成需求指定的功能
-    return (new OrderRepresentation({
-      createTime: new Date('2019-07-02 15:00:00'),
-      orderId: '0000001',
-      memberNo: '6236609999',
-      memberName: '马丁',
+    let data = {
+      createTime: new Date(USERJSON.createTime),
+      orderId: USERJSON.orderId,
+      memberNo: USERJSON.memberNo,
+      memberName: getUser(USERJSON.memberNo).memberName,
       memberPoIncreased: 2,
       memberPoints: 19720,
-      newMemberType: '金卡',
+      newMemberType: getUserType(19720),
       totalPrice: message.computedTotalPrice(USERJSON.items),
       totalDiscountPrice: 764.00,
       receivables: 9860.00,
-      oldMemberType: '普卡',
-      memberPointsIncreased: 9860,
+      oldMemberType: getUser(USERJSON.memberNo).MemberType,
+      memberPointsIncreased: getDiscount('002003',5, '9折券').currentPro.productName,
       orderItems: message.getProductMessage(USERJSON.items),
-      discounts,
-      payments,
+      // discounts,
+      // payments,
       discountCards: ['9折券']
-    })).toString()
+    }
+    return (new OrderRepresentation(data)).toString();
   }
 }
